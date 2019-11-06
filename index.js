@@ -1,7 +1,8 @@
 'use strict';
 
 const line = require('@line/bot-sdk');
-const app = require('express');
+const express = require('express');
+const app = express();
 
 const config = {
     channelAccessToken: 'PBX1BDMTYQeXKp82t70h07ykClW2uOyh7V0tgwnFASTCflrQ29R4jJxiHsT5LoUEGzwFNkIxue0LTI3HiIkhG0FKdHeX1u4WKc3aZ4jAll0EvTk97/hlc+IT8UmApgD/DYtUDdQrA4RjTyILdrXjzQdB04t89/1O/w1cDnyilFU=',
@@ -13,7 +14,7 @@ const client = new line.Client(config);
 // const app = express();
 app.listen(process.env.PORT || 3000);
 
-app.get('',  (req, res) => {
+app.get('/',  (req, res) => {
     res.send('hello world');
 })
 
