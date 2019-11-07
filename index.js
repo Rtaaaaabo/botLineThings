@@ -1,12 +1,13 @@
 'use strict';
-
 const line = require('@line/bot-sdk');
+require('dotenv').config();
+const env = process.env;
 const express = require('express');
 const app = express();
-
+const PORT = process.env.PORT || 3000;
 const config = {
-    channelAccessToken: 'PBX1BDMTYQeXKp82t70h07ykClW2uOyh7V0tgwnFASTCflrQ29R4jJxiHsT5LoUEGzwFNkIxue0LTI3HiIkhG0FKdHeX1u4WKc3aZ4jAll0EvTk97/hlc+IT8UmApgD/DYtUDdQrA4RjTyILdrXjzQdB04t89/1O/w1cDnyilFU=',
-    channelSecret: 'e515e7e7cf93bd9782f02408380f2b1f'
+    channelSecret: env.CLIENT_SECLET,
+    channelAccessToken: env.ACCESS_TOKEN
 }
 
 const client = new line.Client(config);
@@ -20,7 +21,8 @@ app.get('/',  (req, res) => {
 
 app.post('/callback', line.middleware(config), (req, res) => {
     res.sendStatus(200);
-    Promise.all(req.body.events.map(handleEvent))
+    console.log(req);
+    Promise.all(req.body.events.map(handleEvent)).then((result) => res.json(result));
 });
 
 function handleEvent(event) {
@@ -32,15 +34,18 @@ function handleEvent(event) {
 }
 
 function handleThingsEvent(event) {
+    console.log('event', event);
     const echo =  { type: 'text', text: 'Things Event' };
-    return client.replyMessage(event.replyMessage, echo)
+    return client.replyMessage(event.replyToken, echo)
     .then((res) => console.log('Success: ', res))
-    .catch((error) => console.log('Error: ', error));
+    // .catch((error) => console.log('Error: ', error));
 }
 
 function handleMessageEvent(event) {
     const echo =  { type: 'text', text: 'Message Event' };
-    return client.replyMessage(event.replyMessage, echo)
+    return client.replyMessage(event.replyToken, echo)
     .then((res) => console.log('Success: ', res))
-    .catch((error) => console.log('Error: ', error));
+    // .catch((error) => console.log('Error: ', error));
 }
+
+console.log(`Server running at ${PORT}`);
