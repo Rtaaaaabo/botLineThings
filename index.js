@@ -54,8 +54,6 @@ function handleThingsEvent(event) {
   const buffPayLoad = Buffer.from(payLoad, 'base64');
   const countSensor = new Int8Array(buffPayLoad);
   const kindSensor = jugmentCountSensor(countSensor[0])
-  console.log('countSensor: ', countSensor[0]);
-  console.log('kindSensor: ', kindSensor);
   if (kindSensor !== undefined) {
     const echoMessage = { type: 'text', text: kindSensor.message };
     client.replyMessage(event.replyToken, echoMessage);
