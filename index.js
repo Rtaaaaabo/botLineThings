@@ -18,7 +18,7 @@ const BufferData = {
   count4: { value: [15], message: 'センサー 4個 \u{1000A7}', countSensor: 4, stickerId: '52002756' },
 };
 
-const PackageId = '11537';
+// const LineStickerPackageId = '11537';
 
 const client = new line.Client(config);
 
@@ -34,8 +34,9 @@ app.get('/', (req, res) => {
 
 // Line developer Webhookの利用
 app.post('/callback', line.middleware(config), (req, res) => {
+
   res.sendStatus(200);
-  Promise.all(req.body.events.map(handleEvent)).then((result) => res.json(result));
+  Promise.all(req.body.events.map(handleEvent))
 });
 
 // Handleを管理
@@ -53,8 +54,12 @@ function handleThingsEvent(event) {
   const buffPayLoad = Buffer.from(payLoad, 'base64');
   const countSensor = new Int8Array(buffPayLoad);
   const kindSensor = jugmentCountSensor(countSensor[0])
-  const echoMessage = { type: 'text', text: kindSensor.message };
-  client.replyMessage(event.replyToken, echoMessage);
+  console.log('countSensor: ', countSensor[0]);
+  console.log('kindSensor: ', kindSensor);
+  if (kindSensor !== undefined) {
+    const echoMessage = { type: 'text', text: kindSensor.message };
+    client.replyMessage(event.replyToken, echoMessage);
+  }
 };
 
 // メッセージに反応
