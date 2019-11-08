@@ -24,18 +24,21 @@ const client = new line.Client(config);
 
 let currentSensor = 0;
 
-  // const app = express();
-  app.listen(process.env.PORT || 3000);
+// const app = express();
+app.listen(process.env.PORT || 3000);
 
+// 確認用
 app.get('/', (req, res) => {
   res.send('hello world');
 })
 
+// Line developer Webhookの利用
 app.post('/callback', line.middleware(config), (req, res) => {
   res.sendStatus(200);
   Promise.all(req.body.events.map(handleEvent)).then((result) => res.json(result));
 });
 
+// Handleを管理
 function handleEvent(event) {
   if (event.type === 'things') {
     handleThingsEvent(event);
@@ -44,18 +47,17 @@ function handleEvent(event) {
   }
 }
 
+// Line ThingsからEvent時に反応
 function handleThingsEvent(event) {
   const payLoad = event.things.result.bleNotificationPayload;
   const buffPayLoad = Buffer.from(payLoad, 'base64');
   const countSensor = new Int8Array(buffPayLoad);
   const kindSensor = jugmentCountSensor(countSensor[0])
   const echoMessage = { type: 'text', text: kindSensor.message };
-  const echoSticker = { type: 'sticker', packageId: PackageId, stickerId: kindSensor.stickerId }
-  // return client.replyMessage(event.replyToken, echo)
-  // client.replyMessage(event.replyToken, echoSticker);
   client.replyMessage(event.replyToken, echoMessage);
 };
 
+// メッセージに反応
 function handleMessageEvent(event) {
   const echo = { type: 'text', text: 'Message Event' };
   client.replyMessage(event.replyToken, echo)
